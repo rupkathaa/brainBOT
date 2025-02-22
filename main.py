@@ -3,7 +3,7 @@ import google.generativeai as genai
 from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
-
+from fastapi.middleware.cors import CORSMiddleware
 # Load API key from .env file
 load_dotenv()
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
@@ -39,7 +39,16 @@ chat_session = model.start_chat(history=chat_history)
 
 # Initialize FastAPI app
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://brain-bot-8hky.vercel.app",
+        "https://4385f656-a93f-443d-9dd5-127f60d8e5fa-00-2avmmtpp9s0l7.janeway.replit.dev"
+    ],
+    allow_credentials=True,
+    allow_methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
+)
 # Define the request model for the API
 class ChatRequest(BaseModel):
     user_input: str
