@@ -46,6 +46,8 @@ app.add_middleware(
     "https://4385f656-a93f-443d-9dd5-127f60d8e5fa-00-2avmmtpp9s0l7.janeway.replit.dev",
     "http://localhost",  # Add these
     "http://localhost:3000",
+        "http://localhost:5000",
+       "file:///C:/Users/91977/OneDrive/Desktop/text.html",
     "http://127.0.0.1",
     "http://127.0.0.1:5500"  # Common port for live servers
 ],
