@@ -1,4 +1,4 @@
-gradio
+fastapi
+uvicorn
 python-dotenv
 google-generativeai
-

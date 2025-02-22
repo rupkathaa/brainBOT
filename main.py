@@ -1,6 +1,7 @@
 import os
-import gradio as gr
 import google.generativeai as genai
+from fastapi import FastAPI
+from pydantic import BaseModel
 from dotenv import load_dotenv
 
 # Load API key from .env file
@@ -16,54 +17,43 @@ generation_config = {
     "response_mime_type": "text/plain",
 }
 
-# Initialize chatbot model
+# Initialize chatbot model with system instruction and an initial chat history
 model = genai.GenerativeModel(
     model_name="gemini-2.0-flash",
     generation_config=generation_config,
-    system_instruction="You are a highly knowledgeable medical chatbot specializing in brain tumors. \n"
-                       "You must provide detailed, factual, and to-the-point answers based on verified medical knowledge. \n"
-                       "If you do not know the answer, simply respond with: \"I don't know the answer yet.\"\n"
+    system_instruction=(
+        "You are a highly knowledgeable medical chatbot specializing in brain tumors. \n"
+        "You must provide detailed, factual, and to-the-point answers based on verified medical knowledge. \n"
+        "If you do not know the answer, simply respond with: \"I don't know the answer yet.\""
+    )
 )
 
-# Store chat history
+# Set an initial chat history
 chat_history = [
     {"role": "user", "parts": ["hello"]},
     {"role": "model", "parts": ["Hello! How can I help you today with your questions about brain tumors?"]},
 ]
 
-# Start chat session
+# Start the chat session
 chat_session = model.start_chat(history=chat_history)
 
-# Function to generate chatbot response
-def chatbot_response(user_input, history):
+# Initialize FastAPI app
+app = FastAPI()
+
+# Define the request model for the API
+class ChatRequest(BaseModel):
+    user_input: str
+
+# API endpoint to handle chat requests
+@app.post("/chat")
+async def chat_endpoint(request: ChatRequest):
     global chat_session
+    # Send user's message to the chatbot
+    response = chat_session.send_message(request.user_input)
+    # Optionally, you can update your chat history here if needed
+    return {"response": response.text}
 
-    # Send message to chatbot
-    response = chat_session.send_message(user_input)
-
-    # Append to history
-    history.append((user_input, response.text))
-
-    return "", history
-
-# Gradio UI
-with gr.Blocks() as demo:
-    gr.Markdown("#  Brain Tumor Chatbot")
-    gr.Markdown("Ask me anything about brain tumors!")
-
-    chatbot = gr.Chatbot()
-    user_input = gr.Textbox(label="Your question:")
-    
-    with gr.Row():
-        submit_button = gr.Button("Ask")
-        clear_button = gr.Button("Clear")
-
-    submit_button.click(chatbot_response, inputs=[user_input, chatbot], outputs=[user_input, chatbot])
-    clear_button.click(lambda: [], outputs=[chatbot])
-
-# Run Gradio app
-import os
-
-def start():
-    demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
-
+# For local testing (Vercel will automatically detect the "app" variable)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
