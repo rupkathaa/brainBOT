@@ -10,7 +10,10 @@
     {
       "source": "/chat",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "https://brain-bot-8hky.vercel.app/" },
+        { 
+          "key": "Access-Control-Allow-Origin", 
+          "value": "https://brain-bot-8hky.vercel.app, https://4385f656-a93f-443d-9dd5-127f60d8e5fa-00-2avmmtpp9s0l7.janeway.replit.dev" 
+        },
         { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
       ]
@@ -18,7 +21,10 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "https://brain-bot-8hky.vercel.app/" }
+        { 
+          "key": "Access-Control-Allow-Origin", 
+          "value": "https://brain-bot-8hky.vercel.app, https://4385f656-a93f-443d-9dd5-127f60d8e5fa-00-2avmmtpp9s0l7.janeway.replit.dev" 
+        }
       ]
     }
   ]
